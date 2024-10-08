@@ -77,7 +77,8 @@ def get_info(mydiv):
     info1 = mydiv.find_all("span", {"class": "visually-hidden"})
     puesto = str(info1[0]).split('<!-- -->')[1]
     info2 = mydiv.find_all("div", {"class": "artdeco-entity-lockup__caption ember-view"})
-    empresa = str(info2[0]).split('<!-- -->')[1].split('·')[0]
+    info3 = mydiv.find_all("span", {"class": "job-card-container__primary-description"})
+    empresa = str(info3[0]).split('<!-- -->')[1].split('·')[0]
     loc = get_loc(info2)
     a = mydiv.findAll('a')
     link = str(a).split('href=')[1].split(' ')[0].split(';')[0]
