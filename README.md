@@ -29,7 +29,17 @@ In your terminal:
 
 ## Options
 
+You can specify different options as arguments:
+
+- ``--keywords`` Key words of job position
+- ``--location`` Select the location ID (geoid). Spain by default. To select another location id, check this [post](https://nubela.co/blog/how-to-fetch-geo_id-parameter-for-the-job-api/).
+- ``--export`` Keep track of positions in excel file
+- ``--export_file`` Select the path for the excel file (job_list.xlsx by default)
+- ``--wait_time`` Select repeating frecuency of searches (in minutes, 15 by default)
+
 ## Example
+
+``python run.py -k "King" "President of the USA" -l 105646813 -e -w 20``
 
 ## Participate
 
