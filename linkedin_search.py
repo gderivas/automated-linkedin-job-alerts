@@ -2,6 +2,7 @@
 
 from dotenv import load_dotenv
 import os
+import re
 
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -76,15 +77,24 @@ def get_loc(info2):
 def get_info(mydiv):
     info1 = mydiv.find_all("span", {"class": "visually-hidden"})
     puesto = str(info1[0]).split('<!-- -->')[1]
+    puesto = cleaning(puesto)
     info2 = mydiv.find_all("div", {"class": "artdeco-entity-lockup__caption ember-view"})
     info3 = mydiv.find_all("span", {"class": "job-card-container__primary-description"})
     empresa = str(info3[0]).split('<!-- -->')[1].split('·')[0]
+    empresa = cleaning(empresa)
     loc = get_loc(info2)
+    loc = cleaning(loc)
     a = mydiv.findAll('a')
     link = str(a).split('href=')[1].split(' ')[0].split(';')[0]
     link = 'www.linkedin.com' + link[1:]
     job_id = link.split('/')[3]
     return puesto, empresa, loc, link, job_id
+
+def cleaning(string):
+    string = string.replace('&amp;','&')
+    string = string.replace('with verification','')
+    string = re.sub(r'<[^<]*>?','',string)
+    return string
 
 def make_search(driver,url,job_des, args):
     print(f'>> New {job_des} Search!\n')
@@ -95,7 +105,7 @@ def make_search(driver,url,job_des, args):
     else:
         print('No export file found!')
         df = pd.DataFrame({'ID':[],'Búsqueda':[],'Fecha':[],'Puesto':[],'Empresa':[],'Localización':[],'Link':[]},index=[0])
-    today = today = date.today()
+    today = datetime.now().strftime('%m/%d/%Y %H:%m')
     for mydiv in mydivs:
         puesto, empresa, loc, link, job_id = get_info(mydiv)
         if str(job_id) not in df.ID.values:
