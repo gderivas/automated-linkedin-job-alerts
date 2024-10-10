@@ -4,9 +4,11 @@ Automate linkedin job alerts based on keywords and location. Run in the backgrou
 
 Just several hours after a new position is posted on likendin, there are always over hundreds of applicants for the position. To be one of the first ones, you should keep repeating searches every few minutes. With this script you can work in other projects and receive an alert every time a new positions comes out. The search will be reapeted after several minutes again (15min by default).
 
+Terminal logs:
 ![Example](example_1.png "Terminal Search")
 
-![Example](example_2.png "Alert")
+Pop-up alert:
+<img src="example_2.png " width="200">
 
 ## DISCLAIMER
 
