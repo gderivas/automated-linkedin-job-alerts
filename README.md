@@ -4,7 +4,9 @@ Automate linkedin job alerts based on keywords and location. Run in the backgrou
 
 Just several hours after a new position is posted on likendin, there are always over hundreds of applicants for the position. To be one of the first ones, you should keep repeating searches every few minutes. With this script you can work in other projects and receive an alert every time a new positions comes out. The search will be reapeted after several minutes again (15min by default).
 
-![Example](example_1.png "Terminal Seach")
+![Example](example_1.png "Terminal Search")
+
+![Example](example_2.png "Alert")
 
 ## DISCLAIMER
 
@@ -14,6 +16,7 @@ This a learning project to practice scraping with Selenium and BeautifulSoup. Li
 
 - Select flexibility options (Remote, Hybrid, Office)
 - Receive an email when a new job is posted - Optional
+- Do more complex searches (combinations of flexibiity and location)
 
 ## Installation
 
@@ -25,9 +28,10 @@ Prerequisites: git and Python.
 ## Run
 
 In your terminal:
-1. Go to repository folder 
-2. ``python run.py``. Note that there are options which you can specify, see below.
-3. Check the outputs if you exported the data.
+1. Configure ``*.env`` file with your linkedin mail and password. Adjust the Chrome path if needed. 
+2. Go to repository folder 
+3. ``python run.py``. Note that there are options which you can specify, see below.
+4. Check the outputs if you exported the data.
 
 ## Options
 
@@ -41,7 +45,7 @@ You can specify different options as arguments:
 
 ## Example
 
-``python run.py -k "King" "President of the USA" -l 105646813 -e -w 20``
+``python run.py -k "King" "President of the USA" -l 105646813 -w 20 -e``
 
 ## Participate
 
