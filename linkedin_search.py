@@ -47,7 +47,7 @@ def get_flexibily_url(flexibility):
     return flexibilty_url
 
 def get_url(job_info,args):
-    position = "&keywords='" + "%20".join(job_info.split(' '))
+    position = "&keywords=" + "%20".join(job_info.split(' '))
     root = 'https://www.linkedin.com/jobs/search/?currentJobId=4035202295&distance=25&f_'
     flexibility_url = get_flexibily_url(args.flexibility)
     geo_id = '&geoId=' + args.location 
@@ -104,25 +104,37 @@ def make_search(driver,url,job_des, args):
         df = pd.read_excel('job_list.xlsx',converters={'ID':str})
     else:
         print('No export file found!')
-        df = pd.DataFrame({'ID':[],'Búsqueda':[],'Fecha':[],'Puesto':[],'Empresa':[],'Localización':[],'Link':[]},index=[0])
-    today = datetime.now().strftime('%m/%d/%Y %H:%m')
+        df = pd.DataFrame({'ID':[],'Búsqueda':[],'Fecha':[],'Puesto':[],'Empresa':[],'Localización':[],'Link':[],'visto':[]})
+    if os.path.isfile('discard.xlsx'):
+        df_discard = pd.read_excel('discard.xlsx',converters={'ID':str})
+    else:
+        df_discard = pd.DataFrame({'ID':[]})
+    today = datetime.now().strftime('%m/%d/%Y %H:%M')
     for mydiv in mydivs:
         puesto, empresa, loc, link, job_id = get_info(mydiv)
-        if str(job_id) not in df.ID.values:
+        if str(job_id) not in df.ID.values and str(job_id) not in df_discard.ID.values:
             print('... New Position!')
             message = f'{puesto} en {empresa}'
-            pressed = pygui.confirm(text=message,buttons=['go to position','cancel'],timeout=100000)
+            pressed = pygui.confirm(text=message,buttons=['go to position','discard','cancel'],timeout=100000)
             if pressed == 'go to position':
                 CHROME_PATH = os.getenv('CHROME_PATH')
                 webbrowser.get(CHROME_PATH).open(link)
+                visto = 'x'
+            else:
+                visto = '-'
             #win32ui.MessageBox(message, "New Position!")
-            tmp_df = pd.DataFrame({'ID':str(job_id),'Búsqueda':job_des,'Fecha':today,'Puesto':puesto,'Empresa':empresa,'Localización':loc,'Link':link},index=[0])
-            df = pd.concat([df,tmp_df])
+            if pressed == 'discard':
+                tmp_discard = pd.DataFrame({'ID':str(job_id)},index=[0])
+                df_discard = pd.concat([df_discard,tmp_discard])
+            else:
+                tmp_df = pd.DataFrame({'ID':str(job_id),'Búsqueda':job_des,'Fecha':today,'Puesto':puesto,'Empresa':empresa,'Localización':loc,'Link':link,'visto':visto},index=[0])
+                df = pd.concat([df,tmp_df])
             print(f'Puesto: {puesto}, Empresa: {empresa}, Localización: {loc}, Job ID:{job_id}')
 
     if args.export:
         print('... Writing to disk!\n')
         df.to_excel('job_list.xlsx', index=False)
+        df_discard.to_excel('discard.xlsx',index=False)
 
 
 def get_args():
