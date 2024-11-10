@@ -9,6 +9,8 @@ from bs4 import BeautifulSoup
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from email.message import EmailMessage
+import smtplib
 
 import time
 from datetime import date, datetime
@@ -48,7 +50,7 @@ def get_flexibily_url(flexibility):
 
 def get_url(job_info,args):
     position = "&keywords=" + "%20".join(job_info.split(' '))
-    root = 'https://www.linkedin.com/jobs/search/?currentJobId=4035202295&distance=25&f_'
+    root = 'https://www.linkedin.com/jobs/search/?currentJobId=4053016296&distance=25&f_'
     flexibility_url = get_flexibily_url(args.flexibility)
     geo_id = '&geoId=' + args.location 
     end = '&origin=JOB_SEARCH_PAGE_JOB_FILTER&sortBy=DD'
@@ -85,7 +87,7 @@ def get_info(mydiv):
     loc = get_loc(info2)
     loc = cleaning(loc)
     a = mydiv.findAll('a')
-    link = str(a).split('href=')[1].split(' ')[0].split(';')[0]
+    link = str(a).split('href=')[1].split(' ')[0].split(';')[0] # a.get('href') may work aswell
     link = 'www.linkedin.com' + link[1:]
     job_id = link.split('/')[3]
     return puesto, empresa, loc, link, job_id
@@ -120,6 +122,11 @@ def make_search(driver,url,job_des, args):
                 CHROME_PATH = os.getenv('CHROME_PATH')
                 webbrowser.get(CHROME_PATH).open(link)
                 visto = 'x'
+            elif pressed == 'Timeout':
+                visto = 'timeout'
+                mensaje = link
+                titulo = message
+                send_mail('g.drivas@gmail.com',mensaje,titulo)
             else:
                 visto = '-'
             #win32ui.MessageBox(message, "New Position!")
@@ -136,6 +143,19 @@ def make_search(driver,url,job_des, args):
         df.to_excel('job_list.xlsx', index=False)
         df_discard.to_excel('discard.xlsx',index=False)
 
+
+def send_mail(destinatario, mensaje, titulo):
+    app_pass = os.getenv('GMAIL_PASS')
+    email = EmailMessage()
+    remitente = "g.drivas@gmail.com"
+    email["From"] = remitente
+    email["To"] = destinatario
+    email["Subject"] = titulo
+    email.set_content(mensaje)
+    smtp = smtplib.SMTP_SSL("smtp.gmail.com")
+    smtp.login(remitente, app_pass)
+    smtp.sendmail(remitente, destinatario, email.as_string())
+    smtp.quit()
 
 def get_args():
     parser = configargparse.ArgParser()
