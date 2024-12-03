@@ -50,7 +50,7 @@ def get_flexibily_url(flexibility):
 
 def get_url(job_info,args):
     position = "&keywords=" + "%20".join(job_info.split(' '))
-    root = 'https://www.linkedin.com/jobs/search/?currentJobId=4053016296&distance=25&f_'
+    root = 'https://www.linkedin.com/jobs/search/?currentJobId=4053016296&distance=25&f_E=2%2C3%2C4%2C5%2C6&f_'
     flexibility_url = get_flexibily_url(args.flexibility)
     geo_id = '&geoId=' + args.location 
     end = '&origin=JOB_SEARCH_PAGE_JOB_FILTER&sortBy=DD'
@@ -81,7 +81,8 @@ def get_info(mydiv):
     puesto = str(info1[0]).split('<!-- -->')[1]
     puesto = cleaning(puesto)
     info2 = mydiv.find_all("div", {"class": "artdeco-entity-lockup__caption ember-view"})
-    info3 = mydiv.find_all("span", {"class": "job-card-container__primary-description"})
+    info3 = mydiv.find_all("div", {"class": "artdeco-entity-lockup__subtitle ember-view"})
+    #import pdb; pdb.set_trace()
     empresa = str(info3[0]).split('<!-- -->')[1].split('·')[0]
     empresa = cleaning(empresa)
     loc = get_loc(info2)
@@ -125,8 +126,8 @@ def make_search(driver,url,job_des, args):
             elif pressed == 'Timeout':
                 visto = 'timeout'
                 mensaje = link
-                titulo = message
-                send_mail('g.drivas@gmail.com',mensaje,titulo)
+                titulo = job_des + ' - ' + message
+                send_mail(os.getenv('EMAIL'),mensaje,titulo)
             else:
                 visto = '-'
             #win32ui.MessageBox(message, "New Position!")
@@ -147,7 +148,7 @@ def make_search(driver,url,job_des, args):
 def send_mail(destinatario, mensaje, titulo):
     app_pass = os.getenv('GMAIL_PASS')
     email = EmailMessage()
-    remitente = "g.drivas@gmail.com"
+    remitente = os.getenv('EMAIL')
     email["From"] = remitente
     email["To"] = destinatario
     email["Subject"] = titulo
